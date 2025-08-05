@@ -10,15 +10,15 @@ import time
 
 class LaneCarDistanceSystem:
     def __init__(self, use_ufld=True, use_gpu=True):
-        print("🚀 Inicializando sistema com GPU e UFLD...")
+        print("Inicializando sistema com GPU e UFLD...")
         
         # Configuração de GPU/CUDA
         self.use_gpu = use_gpu and torch.cuda.is_available()
         self.device = torch.device('cuda' if self.use_gpu else 'cpu')
         
         if self.use_gpu:
-            print(f"🎮 Usando GPU: {torch.cuda.get_device_name(0)}")
-            print(f"💾 Memória GPU: {torch.cuda.get_device_properties(0).total_memory / 1024**3:.1f} GB")
+            print(f" Usando GPU: {torch.cuda.get_device_name(0)}")
+            print(f" Memória GPU: {torch.cuda.get_device_properties(0).total_memory / 1024**3:.1f} GB")
             # Otimizações CUDA
             torch.backends.cudnn.benchmark = True
             torch.backends.cudnn.deterministic = False
@@ -99,7 +99,7 @@ Ou use o comando:
 wget https://github.com/cfzd/Ultra-Fast-Lane-Detection/releases/download/v1.0.0/culane_r18.pth
                 """)
             
-            print(f"📥 Carregando pesos de {weight_file}...")
+            print(f" Carregando pesos de {weight_file}...")
             state_dict = torch.load(weight_file, map_location=self.device)
             
             # Verificar se o state_dict tem a chave 'model'
@@ -123,16 +123,16 @@ wget https://github.com/cfzd/Ultra-Fast-Lane-Detection/releases/download/v1.0.0/
             if self.use_gpu:
                 memory_allocated = torch.cuda.memory_allocated(0) / 1024**2
                 memory_reserved = torch.cuda.memory_reserved(0) / 1024**2
-                print(f"💾 Memória GPU alocada: {memory_allocated:.1f} MB")
-                print(f"💾 Memória GPU reservada: {memory_reserved:.1f} MB")
+                print(f" Memória GPU alocada: {memory_allocated:.1f} MB")
+                print(f" Memória GPU reservada: {memory_reserved:.1f} MB")
             
         except ImportError as e:
-            print(f"❌ Erro ao importar UFLD: {e}")
+            print(f" Erro ao importar UFLD: {e}")
             print("Usando detecção simples de faixas com OpenCV")
             self.use_ufld = False
         
         except Exception as e:
-            print(f"❌ Erro ao inicializar UFLD: {e}")
+            print(f" Erro ao inicializar UFLD: {e}")
             print("Usando detecção simples de faixas com OpenCV")
             self.use_ufld = False
     
@@ -493,10 +493,10 @@ def main():
     try:
         # Verificar GPU
         if torch.cuda.is_available():
-            print(f"🎮 GPU detectada: {torch.cuda.get_device_name(0)}")
-            print(f"💾 Memória GPU: {torch.cuda.get_device_properties(0).total_memory / 1024**3:.1f} GB")
+            print(f" GPU detectada: {torch.cuda.get_device_name(0)}")
+            print(f" Memória GPU: {torch.cuda.get_device_properties(0).total_memory / 1024**3:.1f} GB")
         else:
-            print("💻 Usando CPU (GPU não disponível)")
+            print(" Usando CPU (GPU não disponível)")
         
         # Inicializar sistema
         # Definir use_ufld=True para usar UFLD, use_gpu=True para usar GPU
@@ -506,11 +506,11 @@ def main():
         video_path = 'video/car.mp4'  # Substitua pelo seu vídeo
         
         if not os.path.exists(video_path):
-            print(f"⚠️ Arquivo de vídeo não encontrado: {video_path}")
+            print(f"⚠ Arquivo de vídeo não encontrado: {video_path}")
             print("Tentando usar câmera padrão...")
             cap = cv2.VideoCapture(0)
         else:
-            print(f"📹 Carregando vídeo: {video_path}")
+            print(f" Carregando vídeo: {video_path}")
             cap = cv2.VideoCapture(video_path)
         
         if not cap.isOpened():
@@ -520,8 +520,8 @@ def main():
         # Obter informações do vídeo
         fps_video = cap.get(cv2.CAP_PROP_FPS)
         total_frames = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
-        print(f"📊 FPS do vídeo: {fps_video:.1f}")
-        print(f"📊 Total de frames: {total_frames}")
+        print(f" FPS do vídeo: {fps_video:.1f}")
+        print(f" Total de frames: {total_frames}")
         
         print("🚀 Sistema iniciado! Pressione 'q' para sair, 'p' para pausar.")
         
@@ -535,7 +535,7 @@ def main():
             
             ret, frame = cap.read()
             if not ret:
-                print("📺 Fim do vídeo ou erro na captura")
+                print("Fim do vídeo ou erro na captura")
                 break
             
             frame_count += 1
@@ -579,14 +579,14 @@ def main():
                     avg_processing_time = sum(processing_times[-60:]) / len(processing_times[-60:])
                     avg_fps_log = 1.0 / avg_processing_time if avg_processing_time > 0 else 0
                     
-                    print(f"\n📊 Frame {frame_count}")
+                    print(f"\n Frame {frame_count}")
                     print(f"   FPS médio: {avg_fps_log:.1f}")
                     print(f"   Tempo médio: {avg_processing_time*1000:.1f}ms")
                     print(f"   Média carros/frame: {avg_cars:.1f}")
                     print(f"   Média faixas/frame: {avg_lanes:.1f}")
                     
                     if alerts:
-                        print("   🚨 Alertas ativos:")
+                        print("Alertas ativos:")
                         for alert in alerts:
                             print(f"     {alert['message']}")
                     
@@ -594,7 +594,7 @@ def main():
                     if system.use_gpu:
                         memory_allocated = torch.cuda.memory_allocated(0) / 1024**2
                         memory_reserved = torch.cuda.memory_reserved(0) / 1024**2
-                        print(f"   💾 GPU Mem: {memory_allocated:.1f}MB / {memory_reserved:.1f}MB")
+                        print(f" GPU Mem: {memory_allocated:.1f}MB / {memory_reserved:.1f}MB")
                 
             except Exception as e:
                 print(f"❌ Erro ao processar frame {frame_count}: {e}")
@@ -625,7 +625,7 @@ def main():
         
         # Relatório final
         if frame_count > 0:
-            print(f"\n📈 RELATÓRIO FINAL:")
+            print(f"\n RELATÓRIO FINAL:")
             print(f"   Total de frames processados: {frame_count}")
             print(f"   FPS médio: {1.0 / (sum(processing_times) / len(processing_times)):.1f}")
             print(f"   Carros detectados: {total_cars}")
@@ -633,7 +633,8 @@ def main():
             print(f"   Dispositivo usado: {'GPU' if system.use_gpu else 'CPU'}")
             print(f"   Método de detecção: {'UFLD' if system.use_ufld and system.ufld_model else 'OpenCV'}")
         
-        print("🏁 Sistema encerrado.")
+        print("Sistema encerrado.")
 
 if __name__ == "__main__":
+
     main()
